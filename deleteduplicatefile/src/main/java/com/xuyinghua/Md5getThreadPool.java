@@ -1,6 +1,5 @@
 package com.xuyinghua;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,8 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.filechooser.FileSystemView;
 
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Md5getThreadPool {
@@ -39,6 +36,7 @@ public class Md5getThreadPool {
 							+ "\n-----将在桌面生成校验日志，重复文件将被剪切至文件所在盘根目录-----");
 					scPath = sc.nextLine();
 					if (scPath.equals("exit")) {
+						sc.close();
 						System.exit(0);
 					} else if (scPath == null || scPath.isEmpty()) {
 						System.out.println("-----输入错误，请检查-----");
@@ -49,7 +47,6 @@ public class Md5getThreadPool {
 
 				long startTime = System.currentTimeMillis();
 				initLog();
-				// initExcel();
 
 				for (String string : scPath.split(";")) {
 					path = string;
@@ -69,7 +66,6 @@ public class Md5getThreadPool {
 				double cosTime = (endTime - startTime) / 1000.0;
 
 				endLog(cosTime);
-//				endExcel();
 
 			}
 		} catch (Exception e) {
@@ -80,7 +76,6 @@ public class Md5getThreadPool {
 			try {
 				Md5getThreadPool.class.wait();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -101,6 +96,25 @@ public class Md5getThreadPool {
 		wrDel.close();
 		System.out.println("-------------------------------------");
 		System.out.println("全部校验完毕,共耗时："+cosTime+"s\n\n");
+		
+		
+		//excel格式日志
+		//自动调节列宽
+//		XSSFSheet sheet = workbook.getSheet("sheet1");
+//		sheet.autoSizeColumn(0);
+//		sheet.autoSizeColumn(1);
+//		sheet.autoSizeColumn(2);
+//		XSSFSheet sheet2 = workbook.getSheet("sheet2");
+//		sheet2.autoSizeColumn(0);
+//		sheet2.autoSizeColumn(1);
+//		sheet2.autoSizeColumn(2);
+//		
+		//写入Excel文件，并关闭
+//		String excelPath =System.getProperty("user.dir")+"/md5.xlsx";
+//		BufferedOutputStream fOut = new BufferedOutputStream(new FileOutputStream(excelPath));
+//		workbook.write(fOut);
+//		fOut.close();
+//		workbook.close();
 	}
 
 	/**
@@ -118,6 +132,24 @@ public class Md5getThreadPool {
 		
 		wrDel.write("标题,md5值,删除文件,保留文件");
 		wrDel.newLine();
+		
+		
+		
+		//Excel格式日志，创建excel文档 
+//		workbook=new XSSFWorkbook(); 
+		//设置标题行 XSSFSheet sheet =
+		/*
+		 * workbook.createSheet("sheet1"); XSSFRow row = sheet.createRow(0);
+		 * row.createCell(0).setCellValue("文件名");
+		 * row.createCell(1).setCellValue("md5值");
+		 * row.createCell(2).setCellValue("文件路劲");
+		 * 
+		 * XSSFSheet sheet2 = workbook.createSheet("sheet2"); XSSFRow s2Row =
+		 * sheet2.createRow(0); s2Row.createCell(0).setCellValue("文件名");
+		 * s2Row.createCell(1).setCellValue("md5值");
+		 * s2Row.createCell(2).setCellValue("文件路劲");
+		 */
+
 	}
 
 	/**
@@ -137,40 +169,4 @@ public class Md5getThreadPool {
 		}
 	}
 	
-	private static void initExcel() {
-		//创建excel文档
-		workbook=new XSSFWorkbook();
-		//设置标题行
-		XSSFSheet sheet = workbook.createSheet("sheet1");
-		XSSFRow row = sheet.createRow(0);
-		row.createCell(0).setCellValue("文件名");
-		row.createCell(1).setCellValue("md5值");
-		row.createCell(2).setCellValue("文件路劲");
-		
-		XSSFSheet sheet2 = workbook.createSheet("sheet2");
-		XSSFRow s2Row = sheet2.createRow(0);
-		s2Row.createCell(0).setCellValue("文件名");
-		s2Row.createCell(1).setCellValue("md5值");
-		s2Row.createCell(2).setCellValue("文件路劲");
-	}
-	
-	private static void endExcel() throws Exception {
-		//自动调节列宽
-//		XSSFSheet sheet = workbook.getSheet("sheet1");
-//		sheet.autoSizeColumn(0);
-//		sheet.autoSizeColumn(1);
-//		sheet.autoSizeColumn(2);
-//		XSSFSheet sheet2 = workbook.getSheet("sheet2");
-//		sheet2.autoSizeColumn(0);
-//		sheet2.autoSizeColumn(1);
-//		sheet2.autoSizeColumn(2);
-//		
-		//写入Excel文件，并关闭
-		String excelPath =System.getProperty("user.dir")+"/md5.xlsx";
-		BufferedOutputStream fOut = new BufferedOutputStream(new FileOutputStream(excelPath));
-		workbook.write(fOut);
-		fOut.close();
-		workbook.close();
-	}
-
 }

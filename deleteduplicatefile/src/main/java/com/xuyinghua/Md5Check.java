@@ -16,7 +16,7 @@ public class Md5Check implements Runnable{
 	
 		
 	private File file;
-	private XSSFWorkbook workbook;
+//	private XSSFWorkbook workbook;
 	private BufferedWriter wrCheck;
 	private BufferedWriter wrDel;
 	public static HashMap<String, String> map=new HashMap<String, String>();
@@ -24,7 +24,7 @@ public class Md5Check implements Runnable{
 	public Md5Check(File file, XSSFWorkbook workbook) {
 		super();
 		this.file = file;
-		this.workbook = workbook;
+//		this.workbook = workbook;
 	}
 	public Md5Check(File file, BufferedWriter wrCheck,BufferedWriter wrDel) {
 		super();
@@ -48,7 +48,6 @@ public class Md5Check implements Runnable{
 				endCheck(md5);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("异常文件为："+file.getAbsolutePath());
 		}
