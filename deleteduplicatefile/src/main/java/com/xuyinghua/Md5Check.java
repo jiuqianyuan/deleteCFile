@@ -15,7 +15,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class Md5Check implements Runnable{
 	
 		
-	private File scFile;
 	private File file;
 //	private XSSFWorkbook workbook;
 	private BufferedWriter wrCheck;
@@ -27,9 +26,8 @@ public class Md5Check implements Runnable{
 		this.file = file;
 //		this.workbook = workbook;
 	}
-	public Md5Check(File scFile,File file, BufferedWriter wrCheck,BufferedWriter wrDel) {
+	public Md5Check(File file, BufferedWriter wrCheck,BufferedWriter wrDel) {
 		super();
-		this.scFile = scFile;
 		this.file = file;
 		this.wrCheck = wrCheck;
 		this.wrDel = wrDel;
@@ -142,45 +140,34 @@ public class Md5Check implements Runnable{
 		 * 判断删除重复文件并记录
 		 */
 		if(!map.containsKey(md5)){
-			
-			//将控制台输入的根路径与文件路径存入map
-			map.put(md5, scFile.getAbsolutePath()+";"+file.getAbsolutePath());
+			map.put(md5, file.getAbsolutePath());
 		}else {
 			//留下绝对路径名短的
-			File preFile = new File(map.get(md5).split(";")[1]);
-			int pl = preFile.getAbsolutePath().length();
+			File sFile = new File(map.get(md5));
+			int sl = sFile.getAbsolutePath().length();
 			int l=file.getAbsolutePath().length();
-			File mvFile=file;
-			File mvScFile=scFile;
-			if(pl>l) {
-				mvScFile=new File(map.get(md5).split(";")[0]);
-				mvFile=preFile;
-				map.put(md5, scFile.getAbsolutePath()+";"+file.getAbsolutePath());
+			File dFile=file;
+			if(sl>l) {
+				map.put(md5, file.getAbsolutePath());
+				dFile=sFile;
 			}
-			
-			File deFile=null;
-			if (mvScFile.isFile()) {
-				//控制台输入的是文件，则直接更改其父路径为盘符：/delete
-				deFile = new File(mvFile.getAbsolutePath().replace(mvScFile.getParent(),
-						mvScFile.getAbsolutePath().charAt(0) + ":/delete/"));
-			} else {
-				//控制台输入的是文件夹，则将其输入路径更改为盘符：/delete/输入文件夹名/ ,因为文件夹未必有父路径
-				deFile = new File(mvFile.getAbsolutePath().replace(mvScFile.getAbsolutePath(),
-						mvScFile.getAbsolutePath().charAt(0) + ":/delete/" + mvScFile.getName() + "/"));
-			}
+			File deFile=new File(
+					dFile.getAbsolutePath().replace(
+							new File(Md5getThreadPool.path).getAbsolutePath(), 
+							dFile.getAbsolutePath().charAt(0)+":/delete"));
 			
 			if(!deFile.getParentFile().exists()) 
 				deFile.getParentFile().mkdirs();
-			mvFile.renameTo(deFile);
-			System.out.println("重复文件删除："+mvFile.getAbsolutePath()+"/t移动至： "+deFile.getAbsolutePath());
+			dFile.renameTo(deFile);
+			System.out.println("重复文件删除："+dFile.getAbsolutePath());
 			//记录删除文件
 			/*XSSFSheet sheet2 = workbook.getSheet("sheet2");
 			row = sheet2.createRow(sheet2.getLastRowNum()+1);
 			
-			row.createCell(0).setCellValue(mvFile.getName());
+			row.createCell(0).setCellValue(dFile.getName());
 			row.createCell(1).setCellValue(md5);
-			row.createCell(2).setCellValue(mvFile.getAbsolutePath());*/
-			wrDel.write("重复文件删除---,\t"+md5+",\t"+mvFile.getAbsolutePath()+",\t"+map.get(md5));
+			row.createCell(2).setCellValue(dFile.getAbsolutePath());*/
+			wrDel.write("重复文件删除---,\t"+md5+",\t"+dFile.getAbsolutePath()+",\t"+map.get(md5));
 			wrDel.newLine();
 		}
 	}
