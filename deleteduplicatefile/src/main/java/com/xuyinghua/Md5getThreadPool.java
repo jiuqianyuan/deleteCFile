@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.filechooser.FileSystemView;
 
+import org.apache.poi.hssf.record.PageBreakRecord.Break;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Md5getThreadPool {
@@ -24,17 +25,15 @@ public class Md5getThreadPool {
 	public static File scFile=null;
 	
 	public static void main(String[] args) {
-		try {
-			Scanner sc = new Scanner(System.in);
-			String scPath = null;
-			while (true) {
 
+		Scanner sc = new Scanner(System.in);
+		String scPath = null;
+		while (true) {
+			try {
 				// 创建线程池
 				threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-				
 				while (true) {
-					System.out.println("-----请输入文件地址，多个路径以分号(;)分隔	-----"
-							+ "\n-----将在桌面生成校验日志，重复文件将被剪切至文件所在盘根目录-----");
+					System.out.println("-----请输入文件地址，多个路径以分号(;)分隔	-----" + "\n-----将在桌面生成校验日志，重复文件将被剪切至文件所在盘根目录-----");
 					scPath = sc.nextLine();
 					if (scPath.equals("exit")) {
 						sc.close();
@@ -42,10 +41,9 @@ public class Md5getThreadPool {
 					} else if (scPath == null || scPath.isEmpty()) {
 						System.out.println("-----输入错误，请检查-----");
 						continue;
-					} 
+					}
 					break;
 				}
-
 				long startTime = System.currentTimeMillis();
 				initLog();
 
@@ -57,27 +55,20 @@ public class Md5getThreadPool {
 					// 执行校验
 					getSubFile(scFile);
 				}
-				//收尾
+				// 收尾
 				// 关闭线程并设置200ms超时时间，确定是否执行完毕
 				threadPool.shutdown();
-				while (!threadPool.awaitTermination(2, TimeUnit.SECONDS)) {}
-				
+				while (!threadPool.awaitTermination(2, TimeUnit.SECONDS)) {
+				}
+
 				Md5Check.map.clear();
 				long endTime = System.currentTimeMillis();
 				double cosTime = (endTime - startTime) / 1000.0;
 
 				endLog(cosTime);
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("-----出现异常,请检查输入路径-----");
-		} finally {
-			System.out.println("-----------请关闭程序-----------");
-			try {
-				Md5getThreadPool.class.wait();
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
+				System.out.println("-----出现异常,请检查输入路径-----");
 			}
 		}
 	}
