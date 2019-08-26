@@ -95,8 +95,10 @@ public class Md5Check implements Runnable{
 	       try {
 	         MessageDigest MD5 = MessageDigest.getInstance("MD5");
 	          fileInputStream = new FileInputStream(file);
+	          //默认一次读取256K字节
 	          byte[] buffer = new byte[256*1024];
 	          if (file.length()>512*1024) {
+	        	  //当文件大于512K时，一次读取10M数据
 	        	  buffer = new byte[10*1024*1024];
 	          }
 	          
