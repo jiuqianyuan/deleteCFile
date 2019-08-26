@@ -21,6 +21,7 @@ public class Md5getThreadPool {
 	public static BufferedWriter wrCheck = null;
 	public static BufferedWriter wrDel = null;
 	public static String path=null;
+	public static File scFile=null;
 	
 	public static void main(String[] args) {
 		try {
@@ -50,11 +51,11 @@ public class Md5getThreadPool {
 
 				for (String string : scPath.split(";")) {
 					path = string;
-					File file = new File(path);
-					System.out.println("-------开始校验文件夹\"" + file.getName() + "\"的内容---------");
+					scFile = new File(path);
+					System.out.println("-------开始校验文件夹\"" + scFile.getName() + "\"的内容---------");
 
 					// 执行校验
-					getSubFile(file);
+					getSubFile(scFile);
 				}
 				//收尾
 				// 关闭线程并设置200ms超时时间，确定是否执行完毕
@@ -70,7 +71,7 @@ public class Md5getThreadPool {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("出现异常");
+			System.out.println("-----出现异常,请检查输入路径-----");
 		} finally {
 			System.out.println("-----------请关闭程序-----------");
 			try {
@@ -161,7 +162,7 @@ public class Md5getThreadPool {
 	private static void getSubFile(File file) {
 		if (file.isFile()) {
 //			threadPool.execute(new Md5Check(file,workbook));
-			threadPool.execute(new Md5Check(file, wrCheck, wrDel));
+			threadPool.execute(new Md5Check(scFile,file, wrCheck, wrDel));
 		} else {
 			for (File subFile : file.listFiles()) {
 				getSubFile(subFile);
